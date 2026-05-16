@@ -1,20 +1,17 @@
 
 import './App.css'
 import Users from './Components/Users';
+import { fetchUsers } from './userApi';
 
-const userPromise = fetch('http://localhost:3000/users')
-.then(res => res.json());
-
+const userPromise = fetchUsers();
 
 function App() {
-
-
   return (
- <div>
-    <h1>Users Managemnet</h1>
-    <Users userPromise={userPromise}   ></Users>
-</div>
-  )
+    <div>
+      <h1>Users Management</h1>
+      <Users userPromise={userPromise} />
+    </div>
+  );
 }
 
 export default App

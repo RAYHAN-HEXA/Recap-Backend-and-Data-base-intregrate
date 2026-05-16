@@ -1,4 +1,5 @@
 import React, { use, useState } from 'react';
+import { addUser, buildUserPayload, isValidEmail } from '../userApi';
 
 const Users = ({ userPromise }) => {
 
@@ -6,35 +7,35 @@ const Users = ({ userPromise }) => {
     const usersdata = use(userPromise);
 
     const [users, setUsers] = useState(usersdata);
+    const [error, setError] = useState('');
 
     // handle add user
-    const handleAddUser = (e) => {
+    const handleAddUser = async (e) => {
+        setError('');
         e.preventDefault();
 
         const name = e.target.name.value;
         const email = e.target.email.value;
 
-        console.log(name, email);
+        if (!name.trim() || !email.trim()) {
+            setError('Name and email are required.');
+            return;
+        }
 
-        const newUser = { name, email };
+        if (!isValidEmail(email)) {
+            setError('Please enter a valid email address.');
+            return;
+        }
 
-        // send data to the server
-        fetch('http://localhost:3000/users', {
-            method: 'POST',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify(newUser)
-        })
-            .then(res => res.json())
-            .then(data => {
-                console.log('after post', data);
-                const newUsers = [...users, data]
-                setUsers(newUsers);
-            });
+        const payload = buildUserPayload({ name, email });
 
-        // clear form
-        e.target.reset();
+        try {
+            const data = await addUser(payload);
+            setUsers((prevUsers) => [...prevUsers, data]);
+            e.target.reset();
+        } catch (fetchError) {
+            setError(fetchError.message || 'Unable to add user.');
+        }
     };
 
     return (
@@ -58,6 +59,8 @@ const Users = ({ userPromise }) => {
                     Add User
                 </button>
             </form>
+
+            {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <hr />
 
