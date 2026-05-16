@@ -1,19 +1,24 @@
 import React, { use, useState } from 'react';
 
 const Users = ({ userPromise }) => {
+
     // load users
-    const initialUsers = use(userPromise);
+    const usersdata = use(userPromise);
 
-    const [users, setUsers] = useState(initialUsers);
+    const [users, setUsers] = useState(usersdata);
 
+    // handle add user
     const handleAddUser = (e) => {
         e.preventDefault();
 
         const name = e.target.name.value;
         const email = e.target.email.value;
 
+        console.log(name, email);
+
         const newUser = { name, email };
 
+        // send data to the server
         fetch('http://localhost:3000/users', {
             method: 'POST',
             headers: {
@@ -23,14 +28,12 @@ const Users = ({ userPromise }) => {
         })
             .then(res => res.json())
             .then(data => {
-                const addedUser = {
-                    ...newUser,
-                    _id: data.insertedId
-                };
-
-                setUsers([...users, addedUser]);
+                console.log('after post', data);
+                const newUsers = [...users, data]
+                setUsers(newUsers);
             });
 
+        // clear form
         e.target.reset();
     };
 
@@ -39,16 +42,28 @@ const Users = ({ userPromise }) => {
             <h2>Add a User</h2>
 
             <form onSubmit={handleAddUser}>
-                <input type="text" name="name" placeholder="name" />
-                <input type="email" name="email" placeholder="email" />
-                <button type="submit">Add User</button>
+                <input
+                    type="text"
+                    name="name"
+                    placeholder="name"
+                />
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="email"
+                />
+
+                <button type="submit">
+                    Add User
+                </button>
             </form>
 
             <hr />
 
             {
                 users.map((user) => (
-                    <div key={user._id}>
+                    <div key={user.id}>
                         <h3>{user.name}</h3>
                         <p>{user.email}</p>
                     </div>

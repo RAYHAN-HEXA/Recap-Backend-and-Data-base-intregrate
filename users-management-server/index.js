@@ -22,10 +22,6 @@ app.post('/users',(req,res)=>{
 });
 
 
-  
-
-
-
 const users = [
     {name : '' ,id : 1,email : 'kalagmail.com',phone : 1234567890},
     {name : '' ,id : 2,email : 'kalagmail.com',phone : 1234567890},
