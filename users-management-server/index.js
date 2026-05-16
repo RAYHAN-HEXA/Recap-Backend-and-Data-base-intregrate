@@ -3,13 +3,25 @@ const cors = require ('cors');
 
 const app = express();
 app.use(cors());
+app.use(express.json());
+
 
 
 const port = process.env.PORT || 3000;
  
 app.get('/',(req,res)=>{
     res.send('hello world');
-})
+});
+app.post('/users',(req,res)=>{
+    console.log('post method called',req.body);
+    const newUser = req.body;
+    newUser.id = users.length + 1;
+    users.push(newUser);
+    res.send(newUser);
+
+});
+
+
   
 
 
